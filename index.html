@@ -1,27 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>To-Do List</title>
-<link rel="stylesheet" href="styles.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-</head>
-<body>
-<div class="container">
-  <h1>To-Do List</h1>
-  <div class="input-container">
-    <input type="text" id="taskInput" placeholder="Enter a new task">
-    <button id="addTaskButton" onclick="addTask()">
-      <i class="fas fa-plus-circle"></i>
-    </button>
-  </div>
-  <ul id="taskList"></ul>
-</div>
-<script src="script.js"></script>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>To-Do List</title>
 <link rel="stylesheet" href="styles.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
 <div class="container">
@@ -38,32 +14,35 @@
   <div class="input-container">
     <input type="text" id="taskInput" placeholder="Enter a new task">
     <input type="datetime-local" id="taskDateTime">
-    <select id="taskPriority">
-      <option value="low">Low Priority</option>
-      <option value="medium">Medium Priority</option>
-      <option value="high">High Priority</option>
-    </select>
     <select id="taskCategory">
       <option value="work">Work</option>
       <option value="personal">Personal</option>
       <option value="shopping">Shopping</option>
     </select>
+    <select id="taskPriority">
+      <option value="high">High Priority</option>
+      <option value="medium">Medium Priority</option>
+      <option value="low">Low Priority</option>
+    </select>
     <button id="addTaskButton" onclick="addTask()">
-      <i class="fas fa-plus-circle"></i>
+      <i class="material-icons">add</i>
     </button>
   </div>
 
-  <div class="filter-container">
-    <select id="filterCategory" onchange="filterTasks()">
-      <option value="all">All Categories</option>
-      <option value="work">Work</option>
-      <option value="personal">Personal</option>
-      <option value="shopping">Shopping</option>
-    </select>
-    <button onclick="sortTasksByDate()">Sort by Due Date</button>
+  <div class="sections-container">
+    <div class="section" id="workSection">
+      <h2>Work</h2>
+      <ul id="workTasks"></ul>
+    </div>
+    <div class="section" id="personalSection">
+      <h2>Personal</h2>
+      <ul id="personalTasks"></ul>
+    </div>
+    <div class="section" id="shoppingSection">
+      <h2>Shopping</h2>
+      <ul id="shoppingTasks"></ul>
+    </div>
   </div>
-
-  <ul id="taskList"></ul>
 </div>
 <script src="script.js"></script>
 </body>

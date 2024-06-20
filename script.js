@@ -1,157 +1,99 @@
-// function addTask() {
-//     var taskInput = document.getElementById("taskInput");
-//     var taskList = document.getElementById("taskList");
-  
-//     if (taskInput.value === "") {
-//       alert("Please enter a task!");
-//       return;
-//     }
-  
-//     var task = document.createElement("li");
-  
-//     var taskText = document.createElement("span");
-//     taskText.textContent = taskInput.value;
-  
-//     var checkbox = document.createElement("input");
-//     checkbox.type = "checkbox";
-//     checkbox.onclick = function() {
-//       taskText.classList.toggle("completed");
-//     };
-  
-//     var checkboxContainer = document.createElement("label");
-//     checkboxContainer.className = "checkbox-container";
-//     var checkmark = document.createElement("span");
-//     checkmark.className = "checkmark";
-  
-//     checkboxContainer.appendChild(checkbox);
-//     checkboxContainer.appendChild(checkmark);
-  
-//     var deleteButton = document.createElement("button");
-//     deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-//     deleteButton.className = "delete-button";
-//     deleteButton.onclick = function() {
-//       task.remove();
-//     };
-  
-//     task.appendChild(checkboxContainer);
-//     task.appendChild(taskText);
-//     task.appendChild(deleteButton);
-//     taskList.appendChild(task);
-  
-//     taskInput.value = "";
-//   }
-  
+// Define an object to store tasks categorized by category
+let tasks = {
+  work: [],
+  personal: [],
+  shopping: []
+};
 
-let tasks = [];
-
+// Function to add a new task
 function addTask() {
-  var taskInput = document.getElementById("taskInput");
-  var taskDateTime = document.getElementById("taskDateTime");
-  var taskPriority = document.getElementById("taskPriority");
-  var taskCategory = document.getElementById("taskCategory");
-  var taskList = document.getElementById("taskList");
+  // Get task details from input fields
+  let taskInput = document.getElementById("taskInput").value;
+  let taskDateTime = document.getElementById("taskDateTime").value;
+  let taskCategory = document.getElementById("taskCategory").value;
+  let taskPriority = document.getElementById("taskPriority").value;
 
-  if (taskInput.value === "") {
-    alert("Please enter a task!");
-    return;
-  }
-
-  var task = {
-    id: Date.now(),
-    text: taskInput.value,
-    dateTime: taskDateTime.value,
-    priority: taskPriority.value,
-    category: taskCategory.value,
+  // Create a new task object
+  let newTask = {
+    id: Date.now(), // Generate unique ID based on current timestamp
+    task: taskInput,
+    dateTime: taskDateTime,
+    priority: taskPriority,
     completed: false
   };
 
-  tasks.push(task);
-  displayTasks(tasks);
+  // Add the new task to the tasks object based on category
+  tasks[taskCategory].push(newTask);
 
-  taskInput.value = "";
-  taskDateTime.value = "";
-  taskPriority.value = "low";
-  taskCategory.value = "work";
+  // Call the function to display tasks
+  displayTasks();
 }
 
-function displayTasks(tasksToDisplay) {
-  var taskList = document.getElementById("taskList");
-  taskList.innerHTML = "";
+// Function to display tasks
+function displayTasks() {
+  // Get references to task lists
+  let workTasksList = document.getElementById("workTasks");
+  let personalTasksList = document.getElementById("personalTasks");
+  let shoppingTasksList = document.getElementById("shoppingTasks");
 
-  tasksToDisplay.forEach(task => {
-    var taskItem = document.createElement("li");
+  // Clear existing tasks from lists
+  workTasksList.innerHTML = "";
+  personalTasksList.innerHTML = "";
+  shoppingTasksList.innerHTML = "";
 
-    var taskText = document.createElement("span");
-    taskText.textContent = task.text;
-    if (task.completed) {
-      taskText.classList.add("completed");
-    }
+  // Iterate over tasks object and display tasks in respective lists
+  Object.keys(tasks).forEach(category => {
+    tasks[category].forEach(task => {
+      // Create list item element for the task
+      let listItem = document.createElement("li");
 
-    var checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = task.completed;
-    checkbox.onclick = function() {
-      task.completed = !task.completed;
-      displayTasks(tasks);
-    };
+      // Set task details as inner HTML of list item
+      listItem.innerHTML = `
+        <div class="checkbox-container">
+          <input type="checkbox" onchange="toggleCompletion(${task.id})" ${task.completed ? 'checked' : ''}>
+          <div class="task-details">
+            <p>${task.task}</p>
+            <p class="task-due">Due: ${task.dateTime}</p>
+            <p class="task-priority">Priority: ${task.priority}</p>
+          </div>
+        </div>
+        <button class="delete-button" onclick="deleteTask(${task.id})">
+          <i class="material-icons">delete</i>
+        </button>
+      `;
 
-    var checkboxContainer = document.createElement("label");
-    checkboxContainer.className = "checkbox-container";
-    var checkmark = document.createElement("span");
-    checkmark.className = "checkmark";
-
-    checkboxContainer.appendChild(checkbox);
-    checkboxContainer.appendChild(checkmark);
-
-    var deleteButton = document.createElement("button");
-    deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-    deleteButton.className = "delete-button";
-    deleteButton.onclick = function() {
-      tasks = tasks.filter(t => t.id !== task.id);
-      displayTasks(tasks);
-    };
-
-    var taskDetails = document.createElement("div");
-    taskDetails.className = "task-details";
-
-    var taskDateTimeSpan = document.createElement("span");
-    taskDateTimeSpan.className = "task-date-time";
-    taskDateTimeSpan.textContent = task.dateTime ? `Due: ${new Date(task.dateTime).toLocaleString()}` : "";
-
-    var taskPrioritySpan = document.createElement("span");
-    taskPrioritySpan.className = "task-priority";
-    taskPrioritySpan.textContent = `Priority: ${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}`;
-
-    var taskCategorySpan = document.createElement("span");
-    taskCategorySpan.className = "task-category";
-    taskCategorySpan.textContent = `Category: ${task.category.charAt(0).toUpperCase() + task.category.slice(1)}`;
-
-    taskDetails.appendChild(taskText);
-    taskDetails.appendChild(taskDateTimeSpan);
-    taskDetails.appendChild(taskPrioritySpan);
-    taskDetails.appendChild(taskCategorySpan);
-
-    taskItem.appendChild(checkboxContainer);
-    taskItem.appendChild(taskDetails);
-    taskItem.appendChild(deleteButton);
-    taskList.appendChild(taskItem);
+      // Append the list item to the respective task list based on category
+      switch (category) {
+        case 'work':
+          workTasksList.appendChild(listItem);
+          break;
+        case 'personal':
+          personalTasksList.appendChild(listItem);
+          break;
+        case 'shopping':
+          shoppingTasksList.appendChild(listItem);
+          break;
+      }
+    });
   });
 }
 
-function filterTasks() {
-  var filterCategory = document.getElementById("filterCategory").value;
-  if (filterCategory === "all") {
-    displayTasks(tasks);
-  } else {
-    var filteredTasks = tasks.filter(task => task.category === filterCategory);
-    displayTasks(filteredTasks);
-  }
+// Function to toggle task completion status
+function toggleCompletion(id) {
+  Object.keys(tasks).forEach(category => {
+    tasks[category].forEach(task => {
+      if (task.id === id) {
+        task.completed = !task.completed;
+      }
+    });
+  });
+  displayTasks();
 }
 
-function sortTasksByDate() {
-  tasks.sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
-  displayTasks(tasks);
+// Function to delete a task
+function deleteTask(id) {
+  Object.keys(tasks).forEach(category => {
+    tasks[category] = tasks[category].filter(task => task.id !== id);
+  });
+  displayTasks();
 }
-
-// Initial display of tasks
-displayTasks(tasks);
